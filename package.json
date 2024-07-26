@@ -1,0 +1,14 @@
+{
+    "name": "meta-examples",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "demo-service": "pnpm -F service-demo dev"
+    },
+    "keywords": [
+        "APP-META"
+    ],
+    "author": "0604hx <zxingming@foxmail.com>",
+    "license": "MIT"
+}

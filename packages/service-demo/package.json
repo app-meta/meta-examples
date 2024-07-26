@@ -1,0 +1,16 @@
+{
+    "name": "service-demo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "node .",
+        "build": ""
+    },
+    "dependencies": {
+        "@app-meta/basic-service": "workspace:1.0.0"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
