@@ -2,7 +2,7 @@
  * @Author: 集成显卡
  * @Date: 2022-12-02 10:05:37
  * @Last Modified by: 集成显卡
- * @Last Modified time: 2024-07-26 14:57:34
+ * @Last Modified time: 2024-08-16 09:56:41
  */
 
 const fs = require("fs")
@@ -24,7 +24,7 @@ const buildLogger = (withFile=true)=>{
     var logger = withFile?
         require('tracer').dailyfile({
             root:_dir,
-            logPathFormat: global.logPath ?? "log.txt",//默认日志保存到logs/{日期}.log："{{root}}/{{date}}.log"
+            logPathFormat: global.logPath ?? "{{root}}/{{date}}.log",//默认日志保存到logs/{日期}.log，如需配置单文件："log.txt"
             format: format,
             level: !global.isPro || global.isDebug? "debug":"info",
             dateformat: dateformat,

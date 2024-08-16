@@ -10,5 +10,12 @@
         "APP-META"
     ],
     "author": "0604hx <zxingming@foxmail.com>",
-    "license": "MIT"
+    "license": "MIT",
+    "devDependencies": {
+        "@rspack/cli": "^0.7.5",
+        "@rspack/core": "^0.7.5"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21"
+    }
 }

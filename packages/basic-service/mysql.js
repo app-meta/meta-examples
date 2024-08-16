@@ -31,9 +31,9 @@ const query = (sql, params)=> {
 
 /**
  * 直接返回结果
- * @param {*} sql 
- * @param {*} params 
- * @returns 
+ * @param {*} sql
+ * @param {*} params
+ * @returns
  */
 const select = async (sql, params)=>{
     let [ rows ] = await query(sql, params)
@@ -55,7 +55,7 @@ exports.query = query
 exports.select = select
 
 /**
- * 
+ *
  * @param {import('.').ServerConfig} config
  * @returns {Object}
  */
@@ -69,7 +69,7 @@ exports.mysqlBuilder = config=> {
         password: config.dbPwd || '',
         database: config.dbName,
 
-        multipleStatements: true, 
+        multipleStatements: true,
         ssl: false,
         connectTimeout: 30*1000,
         waitForConnections: true,
@@ -90,21 +90,22 @@ exports.count = count
  * @param {String} id
  * @param {String} table
  * @param {String} idField - ID字段名，默认 id
+ * @param {String} other - 额外条件
  * @returns {Object}
  */
-exports.findById= async (id, table, idField="id")=>{
-    let [ results ] = await query(`SELECT * FROM ${table} WHERE ${idField}=? LIMIT 1`, id)
+exports.findById= async (id, table, idField="id", other="")=>{
+    let [ results ] = await query(`SELECT * FROM ${table} WHERE ${idField}=? ${other} LIMIT 1`, id)
     return results[0]
 }
 
 /**
  * 自定义 SQL 分页查询
- * @param {String} table 
- * @param {String} condition 
- * @param {Array|Number|String} params 
- * @param {Number} page 
- * @param {Number} pageSize 
- * @returns 
+ * @param {String} table
+ * @param {String} condition
+ * @param {Array|Number|String} params
+ * @param {Number} page
+ * @param {Number} pageSize
+ * @returns
  */
 exports.findByPageWithSQL = async (table, condition, params, page=1, pageSize=20)=>{
     let total = await count(table, condition, params)
@@ -118,17 +119,17 @@ exports.findByPageWithSQL = async (table, condition, params, page=1, pageSize=20
 }
 
 /**
- * 
- * @param {String} table 
- * @param {Object} form 
- * @param {Pagination} pagination 
+ *
+ * @param {String} table
+ * @param {Object} form
+ * @param {Pagination} pagination
  */
 exports.findByPage = async (table, form, pagination)=>{
     pagination ??= { page:1, pageSize:20 }
     let sql = []
     let ps = []
     let sort = []
-    
+
     const _push = (_sql, _v, special)=>{
         sql.push(_sql)
         ps.push(special===true? Number(_v):_v)
@@ -138,7 +139,7 @@ exports.findByPage = async (table, form, pagination)=>{
         let t = k.split(UNDER)
         if(t.length < 2)
             return
-        
+
         let v = form[k]
         if(v==null || v=="")    return
 
@@ -225,12 +226,35 @@ exports.saveObjToTable = async (obj, table, ignores=[])=>{
  * @returns
  */
 exports.updateObjToTable = async (obj, table, idField="id", ignores=[])=>{
-    let fields = Object.keys(obj).filter(k=> !(k!=idField, k.startsWith("_")  || ignores.includes(k) || obj[k]===undefined))
+    let fields = Object.keys(obj).filter(k=> !(k!=idField || k.startsWith("_")  || ignores.includes(k) || obj[k]===undefined))
     let [ results ] = await query(
         `UPDATE ${table} set ${fields.map(f=>`${f}=?`).join(",")} WHERE ${idField}=?`,
         fields.concat(idField).map(v=> obj[v])
     )
     return results
+}
+
+/**
+ * 保存数据到指定表，如果主键重复则自动更新全部字段（使用 ON DUPLICATE KEY UPDATE）
+ * @param {Object} obj 
+ * @param {String} table 
+ * @param {Array<String>} ignores 
+ * @returns 
+ */
+exports.saveOrUpdateObjToTable = async (obj, table, ignores=[])=>{
+    let fields = Object.keys(obj).filter(k => !(k.startsWith("_") || ignores.includes(k)))
+    let ps = fields.map(v => obj[v])
+    let sql = `INSERT INTO ${table} (${fields.join(",")}) VALUES (${fields.map(v => '?').join(",")})`
+    sql += " ON DUPLICATE KEY UPDATE "
+    sql += fields
+        .map(k => {
+            ps.push(obj[k])
+            return `${k}=?`
+        })
+        .join(",")
+
+    let [result] = await query(sql, ps)
+    return result
 }
 
 /**

@@ -1,11 +1,12 @@
 {
     "name": "service-demo",
+    "aid":"demo",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
     "scripts": {
         "dev": "node .",
-        "build": ""
+        "build": "rspack build"
     },
     "dependencies": {
         "@app-meta/basic-service": "workspace:1.0.0"

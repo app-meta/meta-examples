@@ -2,11 +2,14 @@
 global.isPro = process.env.NODE_ENV === 'production'
 global.isDebug = global.isDebug ??= !global.isPro
 
-const { existsSync, statSync, readFileSync } = require('fs')
+const { existsSync, statSync, readFileSync, watch } = require('fs')
+
+const URL_REFRESH_CONFIG = '/-/refresh-config'
 
 const logger = require("./logger")
 const mysql = require("./mysql")
 const date = require("./date")
+const { debounce } = require('lodash')
 
 const configFile = "config.json"
 /**@type {ServerConfig} */
@@ -99,6 +102,18 @@ exports.initServer = (defaultConfig, routesFunc)=> new Promise(async (ok, fail)=
 
     if(existsSync(configFile) && statSync(configFile).isFile()){
         Object.assign(config, JSON.parse(readFileSync(configFile, { encoding: 'utf-8' })))
+        //开启监听
+        const onConfigChange = debounce(()=>{
+            logger.info("监听到配置文件变化", configFile)
+            const newCfg = JSON.parse(readFileSync(configFile, { encoding: 'utf-8' }))
+            if(newCfg.custom && typeof(newCfg)=='object'){
+                config.custom = newCfg.custom
+                logger.info(`刷新自定义配置`, config.custom)
+            }
+        }, 1000)
+
+        watch(configFile, onConfigChange)
+
         if(global.isDebug){
             logger.info(`从${configFile}中读取配置文件`, config)
         }
