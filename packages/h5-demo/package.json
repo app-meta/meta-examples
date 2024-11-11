@@ -1,0 +1,17 @@
+{
+    "name": "h5-demo",
+    "version": "1.0.0",
+    "template": "h5",
+    "appId": "demo",
+    "pageId": "0",
+    "appName": "H5小程序演示",
+    "description": "",
+    "author": "集成显卡",
+    "scripts": {
+        "dev": "rsbuild dev",
+        "build": "rsbuild build"
+    },
+    "dependencies": {
+        "@app-meta/basic-vue3": "workspace:*"
+    }
+}

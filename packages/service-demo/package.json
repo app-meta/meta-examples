@@ -6,7 +6,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "node .",
-        "build": "rspack build"
+        "build": "rsbuild build"
     },
     "dependencies": {
         "@app-meta/basic-service": "workspace:1.0.0"

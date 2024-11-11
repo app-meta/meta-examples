@@ -4,18 +4,22 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "demo-service": "pnpm -F service-demo dev"
+        "demo": "pnpm -F h5-demo dev",
+        "demo:build": "pnpm -F h5-demo build",
+        "service-demo": "pnpm -F service-demo dev",
+        "service-demo:build": "pnpm -F service-demo build"
     },
     "keywords": [
         "APP-META"
     ],
     "author": "0604hx <zxingming@foxmail.com>",
     "license": "MIT",
-    "devDependencies": {
-        "@rspack/cli": "^0.7.5",
-        "@rspack/core": "^0.7.5"
-    },
     "dependencies": {
         "lodash": "^4.17.21"
+    },
+    "devDependencies": {
+        "@rsbuild/core": "^1.1.0",
+        "@rsbuild/plugin-less": "^1.1.0",
+        "@rsbuild/plugin-vue": "^1.0.4"
     }
 }
